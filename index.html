@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uma pergunta pra você 💌</title>
+<style>
+  :root {
+    --rosa: #ff4d88;
+    --rosa-escuro: #d6336c;
+    --creme: #fff5f8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    background: linear-gradient(135deg, #ffd1e3, #ffb3c9, #e0b3ff, #ffd1e3);
+    background-size: 400% 400%;
+    animation: fundo 14s ease infinite;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    color: #5a1030;
+  }
+  @keyframes fundo {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Corações flutuando */
+  .coracao {
+    position: fixed; bottom: -40px;
+    pointer-events: none; user-select: none;
+    animation: subir linear forwards;
+    z-index: 1;
+  }
+  @keyframes subir {
+    0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: .9; }
+    100% { transform: translateY(-115vh) translateX(var(--dx)) rotate(var(--rot)); opacity: 0; }
+  }
+
+  .cartao {
+    position: relative; z-index: 5;
+    width: min(92vw, 520px);
+    background: rgba(255,255,255,.88);
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 32px 26px 36px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(214,51,108,.3);
+    animation: entrada .9s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes entrada {
+    from { transform: scale(.6) translateY(40px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .emoji-grande {
+    font-size: 84px; line-height: 1;
+    display: inline-block;
+    animation: balanca 2.2s ease-in-out infinite;
+    transition: transform .3s;
+  }
+  @keyframes balanca {
+    0%,100% { transform: rotate(-8deg) translateY(0); }
+    50%     { transform: rotate(8deg) translateY(-8px); }
+  }
+
+  h1 {
+    margin: 14px 0 10px;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    color: var(--rosa-escuro);
+  }
+  #texto {
+    min-height: 120px;
+    font-size: 1.1rem; line-height: 1.6;
+    white-space: pre-line;
+  }
+  .cursor::after {
+    content: "|"; margin-left: 2px;
+    animation: piscar .8s steps(1) infinite;
+  }
+  @keyframes piscar { 50% { opacity: 0; } }
+
+  .pergunta {
+    margin-top: 18px;
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
+    font-weight: bold; color: var(--rosa-escuro);
+    opacity: 0; transform: translateY(10px);
+    transition: all .6s;
+  }
+  .pergunta.visivel { opacity: 1; transform: none; }
+
+  .botoes {
+    margin-top: 22px;
+    display: flex; gap: 16px; justify-content: center; align-items: center;
+    flex-wrap: wrap;
+    min-height: 70px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .6s;
+  }
+  .botoes.visivel { opacity: 1; pointer-events: auto; }
+
+  button {
+    font: inherit; font-weight: bold;
+    border: none; border-radius: 999px;
+    padding: 14px 28px; cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  #sim {
+    background: linear-gradient(135deg, var(--rosa), var(--rosa-escuro));
+    color: #fff; font-size: 1.15rem;
+    box-shadow: 0 8px 20px rgba(214,51,108,.45);
+    animation: pulsar 1.4s ease-in-out infinite;
+  }
+  #sim:hover { transform: scale(1.1); }
+  @keyframes pulsar {
+    0%,100% { box-shadow: 0 8px 20px rgba(214,51,108,.45); }
+    50%     { box-shadow: 0 8px 34px rgba(214,51,108,.8); }
+  }
+  #nao {
+    background: #eee; color: #666; font-size: 1rem;
+    position: relative;
+    transition: left .25s, top .25s, transform .15s;
+  }
+  #nao.foge { position: fixed; z-index: 20; }
+
+  .dica {
+    margin-top: 14px; font-size: .85rem; color: #a0486a;
+    min-height: 1.2em;
+  }
+
+  /* Tela final */
+  #final { display: none; }
+  #final.ativo { display: block; animation: entrada .8s both; }
+  #final .emoji-grande { animation: pulo 1s ease-in-out infinite; }
+  @keyframes pulo {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+  }
+  #final p { margin-top: 12px; font-size: 1.15rem; line-height: 1.6; }
+
+  canvas#confete {
+    position: fixed; inset: 0; z-index: 30; pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confete"></canvas>
+
+<main class="cartao">
+  <section id="inicio">
+    <div class="emoji-grande" id="emoji">🥺</div>
+    <h1 id="titulo">Oi, <span id="nome">você</span>…</h1>
+    <p id="texto" class="cursor"></p>
+    <p class="pergunta" id="pergunta">Você me desculpa? 💔➡️💖</p>
+    <div class="botoes" id="botoes">
+      <button id="sim">Sim, desculpo 💖</button>
+      <button id="nao">Não 😤</button>
+    </div>
+    <p class="dica" id="dica"></p>
+  </section>
+
+  <section id="final">
+    <div class="emoji-grande">🥰</div>
+    <h1>Eba!!! Você me desculpou!</h1>
+    <p>Você acabou de fazer o meu dia (e o mês, e o ano) 💕<br>
+       Prometo ser melhor e te fazer sorrir mais.<br>
+       Que tal um café pra gente conversar? ☕</p>
+  </section>
+</main>
+
+<script>
+  /* ============ PERSONALIZE AQUI ============ */
+  const NOME_PADRAO = "Amandinha Cezar";   // nome dela (ou use o link: seusite.github.io/?nome=Maria)
+  const MENSAGEM =
+`Eu sei que a gente se afastou,
+mas eu não consigo fingir que não penso em você.
+Eu gosto muito de você, de verdade. 💗
+E eu fiz esse site inteiro só pra te perguntar uma coisa…`;
+  /* ========================================= */
+
+  const params = new URLSearchParams(location.search);
+  const nome = params.get("nome") || NOME_PADRAO;
+  document.getElementById("nome").textContent = nome;
+  document.title = `${nome}, uma pergunta pra você 💌`;
+
+  /* Corações flutuantes */
+  const emojisCoracao = ["💖","💗","💕","💘","💝","❤️","🌸"];
+  function criarCoracao() {
+    const c = document.createElement("div");
+    c.className = "coracao";
+    c.textContent = emojisCoracao[Math.floor(Math.random()*emojisCoracao.length)];
+    c.style.left = Math.random()*100 + "vw";
+    c.style.fontSize = (16 + Math.random()*28) + "px";
+    c.style.setProperty("--dx", (Math.random()*160 - 80) + "px");
+    c.style.setProperty("--rot", (Math.random()*80 - 40) + "deg");
+    const dur = 6 + Math.random()*6;
+    c.style.animationDuration = dur + "s";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), dur*1000);
+  }
+  setInterval(criarCoracao, 450);
+  for (let i = 0; i < 8; i++) setTimeout(criarCoracao, i*150);
+
+  /* Máquina de escrever */
+  const textoEl = document.getElementById("texto");
+  let i = 0;
+  function digitar() {
+    if (i < MENSAGEM.length) {
+      textoEl.textContent += MENSAGEM[i++];
+      setTimeout(digitar, 38);
+    } else {
+      textoEl.classList.remove("cursor");
+      document.getElementById("pergunta").classList.add("visivel");
+      setTimeout(() => document.getElementById("botoes").classList.add("visivel"), 500);
+    }
+  }
+  setTimeout(digitar, 900);
+
+  /* Botão "Não" fugindo + botão "Sim" crescendo */
+  const nao = document.getElementById("nao");
+  const sim = document.getElementById("sim");
+  const dica = document.getElementById("dica");
+  const emoji = document.getElementById("emoji");
+  const frases = [
+    "Tem certeza? 🥺",
+    "Pensa direitinho…",
+    "Ei, o botão tá fugindo! 😅",
+    "Você não vai conseguir clicar 😏",
+    "Só o Sim funciona aqui 💖",
+    "Vai, não custa nada 🥹",
+    "Eu prometo ser melhor!",
+    "O Sim tá cada vez maior, hein 👀",
+    "Desiste, vai 😘",
+  ];
+  const emojisTriste = ["🥺","😢","😭","🥹","😿","💔"];
+  let tentativas = 0;
+
+  function fugir(e) {
+    if (e) e.preventDefault();
+    tentativas++;
+    nao.classList.add("foge");
+    const m = 20;
+    const maxX = window.innerWidth - nao.offsetWidth - m;
+    const maxY = window.innerHeight - nao.offsetHeight - m;
+    nao.style.left = (m + Math.random()*Math.max(0, maxX - m)) + "px";
+    nao.style.top  = (m + Math.random()*Math.max(0, maxY - m)) + "px";
+
+    sim.style.transform = `scale(${Math.min(1 + tentativas*0.12, 2.2)})`;
+    dica.textContent = frases[(tentativas-1) % frases.length];
+    emoji.textContent = emojisTriste[tentativas % emojisTriste.length];
+    if (tentativas > 4) nao.textContent = "Não 😭";
+  }
+  nao.addEventListener("pointerenter", fugir);
+  nao.addEventListener("pointerdown", fugir);
+  nao.addEventListener("click", fugir);
+
+  /* Confete */
+  const canvas = document.getElementById("confete");
+  const ctx = canvas.getContext("2d");
+  function ajustar() { canvas.width = innerWidth; canvas.height = innerHeight; }
+  ajustar(); addEventListener("resize", ajustar);
+  let particulas = [];
+  const cores = ["#ff4d88","#ffd43b","#74c0fc","#b197fc","#69db7c","#ff8787"];
+
+  function explodir() {
+    for (let k = 0; k < 220; k++) {
+      particulas.push({
+        x: innerWidth/2, y: innerHeight/2,
+        vx: (Math.random()-.5)*18,
+        vy: (Math.random()-.8)*18,
+        g: .35 + Math.random()*.2,
+        w: 6 + Math.random()*8, h: 8 + Math.random()*10,
+        r: Math.random()*6, vr: (Math.random()-.5)*.4,
+        cor: cores[Math.floor(Math.random()*cores.length)],
+        coracao: Math.random() < .25,
+        vida: 220 + Math.random()*80
+      });
+    }
+  }
+  function loop() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particulas = particulas.filter(p => p.vida > 0 && p.y < canvas.height + 40);
+    for (const p of particulas) {
+      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.vx *= .99;
+      p.r += p.vr; p.vida--;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.r);
+      ctx.globalAlpha = Math.min(1, p.vida/60);
+      if (p.coracao) { ctx.font = "22px serif"; ctx.fillText("💖", 0, 0); }
+      else { ctx.fillStyle = p.cor; ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h); }
+      ctx.restore();
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  /* Clique no Sim */
+  sim.addEventListener("click", () => {
+    document.getElementById("inicio").style.display = "none";
+    document.getElementById("final").classList.add("ativo");
+    nao.style.display = "none";
+    explodir();
+    setTimeout(explodir, 500);
+    setTimeout(explodir, 1100);
+    setInterval(criarCoracao, 120);
+  });
+</script>
+</body>
+</html>
