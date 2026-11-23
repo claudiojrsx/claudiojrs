@@ -8,7 +8,6 @@
   :root {
     --rosa: #ff4d88;
     --rosa-escuro: #d6336c;
-    --creme: #fff5f8;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
@@ -18,7 +17,7 @@
     background-size: 400% 400%;
     animation: fundo 14s ease infinite;
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
+    overflow-x: hidden;
     color: #5a1030;
   }
   @keyframes fundo {
@@ -42,11 +41,11 @@
 
   .cartao {
     position: relative; z-index: 5;
-    width: min(92vw, 520px);
-    background: rgba(255,255,255,.88);
-    backdrop-filter: blur(8px);
+    width: min(92vw, 540px);
+    margin: 20px 0;
+    background: rgba(255,255,255,.93);
     border-radius: 28px;
-    padding: 32px 26px 36px;
+    padding: 30px 24px 34px;
     text-align: center;
     box-shadow: 0 20px 60px rgba(214,51,108,.3);
     animation: entrada .9s cubic-bezier(.2,1.4,.4,1) both;
@@ -56,25 +55,57 @@
     to   { transform: scale(1) translateY(0); opacity: 1; }
   }
 
+  .tela { display: none; }
+  .tela.ativa { display: block; animation: aparecer .6s both; }
+  @keyframes aparecer {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+
   .emoji-grande {
-    font-size: 84px; line-height: 1;
+    font-size: 80px; line-height: 1;
     display: inline-block;
     animation: balanca 2.2s ease-in-out infinite;
-    transition: transform .3s;
   }
   @keyframes balanca {
     0%,100% { transform: rotate(-8deg) translateY(0); }
     50%     { transform: rotate(8deg) translateY(-8px); }
   }
+  .emoji-pulo { animation: pulo 1s ease-in-out infinite; }
+  @keyframes pulo {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+  }
 
   h1 {
-    margin: 14px 0 10px;
-    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    margin: 12px 0 10px;
+    font-size: clamp(1.5rem, 6vw, 2.1rem);
     color: var(--rosa-escuro);
   }
+  h2 {
+    margin: 12px 0 8px;
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
+    color: var(--rosa-escuro);
+  }
+
+  /* Medidores engraçados */
+  .medidores {
+    display: grid; gap: 8px;
+    margin: 6px auto 14px; max-width: 340px;
+    text-align: left; font-size: .82rem; font-weight: bold;
+  }
+  .medidor .rotulo { display: flex; justify-content: space-between; margin-bottom: 3px; }
+  .barra { height: 10px; background: #f3d3df; border-radius: 99px; overflow: hidden; }
+  .barra > i {
+    display: block; height: 100%; width: 0;
+    background: linear-gradient(90deg, #ff8fb3, var(--rosa-escuro));
+    border-radius: 99px;
+    transition: width 2.2s cubic-bezier(.2,.8,.2,1);
+  }
+
   #texto {
-    min-height: 120px;
-    font-size: 1.1rem; line-height: 1.6;
+    min-height: 150px;
+    font-size: 1.05rem; line-height: 1.6;
     white-space: pre-line;
   }
   .cursor::after {
@@ -84,7 +115,7 @@
   @keyframes piscar { 50% { opacity: 0; } }
 
   .pergunta {
-    margin-top: 18px;
+    margin-top: 14px;
     font-size: clamp(1.3rem, 5vw, 1.7rem);
     font-weight: bold; color: var(--rosa-escuro);
     opacity: 0; transform: translateY(10px);
@@ -93,56 +124,68 @@
   .pergunta.visivel { opacity: 1; transform: none; }
 
   .botoes {
-    margin-top: 22px;
+    margin-top: 20px;
     display: flex; gap: 16px; justify-content: center; align-items: center;
     flex-wrap: wrap;
-    min-height: 70px;
+    min-height: 74px;
     opacity: 0; pointer-events: none;
     transition: opacity .6s;
   }
   .botoes.visivel { opacity: 1; pointer-events: auto; }
 
-  button {
+  button, .botao {
     font: inherit; font-weight: bold;
     border: none; border-radius: 999px;
-    padding: 14px 28px; cursor: pointer;
+    padding: 14px 26px; cursor: pointer;
     transition: transform .15s, box-shadow .15s;
+    text-decoration: none; display: inline-block;
   }
-  #sim {
+  .principal {
     background: linear-gradient(135deg, var(--rosa), var(--rosa-escuro));
-    color: #fff; font-size: 1.15rem;
+    color: #fff; font-size: 1.1rem;
     box-shadow: 0 8px 20px rgba(214,51,108,.45);
     animation: pulsar 1.4s ease-in-out infinite;
   }
-  #sim:hover { transform: scale(1.1); }
+  .principal:hover { transform: scale(1.08); }
   @keyframes pulsar {
     0%,100% { box-shadow: 0 8px 20px rgba(214,51,108,.45); }
     50%     { box-shadow: 0 8px 34px rgba(214,51,108,.8); }
   }
   #nao {
     background: #eee; color: #666; font-size: 1rem;
-    position: relative;
     transition: left .25s, top .25s, transform .15s;
   }
-  #nao.foge { position: fixed; z-index: 20; }
+  #nao.foge { position: fixed; z-index: 50; }
 
-  .dica {
-    margin-top: 14px; font-size: .85rem; color: #a0486a;
-    min-height: 1.2em;
-  }
+  .dica { margin-top: 12px; font-size: .9rem; color: #a0486a; min-height: 1.3em; }
 
-  /* Tela final */
-  #final { display: none; }
-  #final.ativo { display: block; animation: entrada .8s both; }
-  #final .emoji-grande { animation: pulo 1s ease-in-out infinite; }
-  @keyframes pulo {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.25); }
+  p.corpo { margin-top: 12px; font-size: 1.08rem; line-height: 1.6; }
+
+  /* Opções de programa */
+  .opcoes {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; margin-top: 18px;
   }
-  #final p { margin-top: 12px; font-size: 1.15rem; line-height: 1.6; }
+  .opcao {
+    background: #fff; color: #5a1030;
+    border: 2px solid #ffc2d6; border-radius: 20px;
+    padding: 16px 8px; font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(214,51,108,.12);
+  }
+  .opcao span { display: block; font-size: 2rem; margin-bottom: 4px; }
+  .opcao:hover { transform: translateY(-4px) rotate(-1.5deg); border-color: var(--rosa); }
+  .opcao.larga { grid-column: 1 / -1; }
+
+  .recibo {
+    margin: 16px auto 0; max-width: 340px;
+    background: #fff8e1; border: 2px dashed #e0a800;
+    border-radius: 12px; padding: 14px;
+    font-family: "Courier New", monospace; font-size: .88rem; text-align: left;
+    line-height: 1.6;
+  }
 
   canvas#confete {
-    position: fixed; inset: 0; z-index: 30; pointer-events: none;
+    position: fixed; inset: 0; z-index: 60; pointer-events: none;
   }
 </style>
 </head>
@@ -151,41 +194,105 @@
 <canvas id="confete"></canvas>
 
 <main class="cartao">
-  <section id="inicio">
+
+  <!-- TELA 1: declaração + pedido de desculpas -->
+  <section class="tela ativa" id="t1">
     <div class="emoji-grande" id="emoji">🥺</div>
-    <h1 id="titulo">Oi, <span id="nome">você</span>…</h1>
+    <h1>Oi, <span id="nome">você</span>…</h1>
+
+    <div class="medidores">
+      <div class="medidor">
+        <div class="rotulo"><span>💘 Saudade</span><span>100%</span></div>
+        <div class="barra"><i data-w="100"></i></div>
+      </div>
+      <div class="medidor">
+        <div class="rotulo"><span>🙏 Arrependimento</span><span>1000% (estourou)</span></div>
+        <div class="barra"><i data-w="100"></i></div>
+      </div>
+      <div class="medidor">
+        <div class="rotulo"><span>😤 Orgulho</span><span>2% (só um restinho)</span></div>
+        <div class="barra"><i data-w="2"></i></div>
+      </div>
+    </div>
+
     <p id="texto" class="cursor"></p>
     <p class="pergunta" id="pergunta">Você me desculpa? 💔➡️💖</p>
     <div class="botoes" id="botoes">
-      <button id="sim">Sim, desculpo 💖</button>
+      <button class="principal" id="sim">Sim, desculpo 💖</button>
       <button id="nao">Não 😤</button>
     </div>
     <p class="dica" id="dica"></p>
   </section>
 
-  <section id="final">
-    <div class="emoji-grande">🥰</div>
-    <h1>Eba!!! Você me desculpou!</h1>
-    <p>Você acabou de fazer o meu dia (e o mês, e o ano) 💕<br>
-       Prometo ser melhor e te fazer sorrir mais.<br>
-       Que tal um café pra gente conversar? ☕</p>
+  <!-- TELA 2: comemoração -->
+  <section class="tela" id="t2">
+    <div class="emoji-grande emoji-pulo">🥰</div>
+    <h1>EBAAAA! Você me desculpou!</h1>
+    <p class="corpo">
+      Meu coração agora está fazendo uma dancinha aqui dentro. 💃🕺<br>
+      Juro que vou fazer valer a pena, nem que eu tenha que lavar a louça pelo resto da vida. 🧽💕
+    </p>
+    <div class="botoes visivel" style="margin-top:22px">
+      <button class="principal" id="continuar">Mas ainda tem mais uma pergunta… 👀</button>
+    </div>
   </section>
+
+  <!-- TELA 3: convite -->
+  <section class="tela" id="t3">
+    <div class="emoji-grande">😳</div>
+    <h2>Agora a pergunta mais importante:</h2>
+    <h1>Aceita sair comigo? 💘</h1>
+    <p class="corpo">Prometo ser pontual, educado(a) e não fazer piadas ruins.<br><small>(talvez uma ou duas)</small></p>
+    <p class="corpo"><b>Escolhe o programa:</b></p>
+    <div class="opcoes" id="opcoes">
+      <button class="opcao" data-p="cafe"><span>☕</span>Um café</button>
+      <button class="opcao" data-p="pizza"><span>🍕</span>Pizza</button>
+      <button class="opcao" data-p="sorvete"><span>🍦</span>Sorvete</button>
+      <button class="opcao" data-p="cinema"><span>🎬</span>Cinema</button>
+      <button class="opcao larga" data-p="surpresa"><span>🎁</span>Surpresa (você manda, eu obedeço)</button>
+    </div>
+  </section>
+
+  <!-- TELA 4: confirmação -->
+  <section class="tela" id="t4">
+    <div class="emoji-grande emoji-pulo">💞</div>
+    <h1>Combinadíssimo!</h1>
+    <p class="corpo" id="msgFinal"></p>
+    <div class="recibo" id="recibo"></div>
+    <p class="corpo">Agora só falta você me chamar pra combinar o dia e o horário 😏</p>
+    <div class="botoes visivel" style="margin-top:14px">
+      <a class="botao principal" id="zap" target="_blank" rel="noopener">Combinar no WhatsApp 💬</a>
+    </div>
+    <p class="dica" id="dicaZap"></p>
+  </section>
+
 </main>
 
 <script>
   /* ============ PERSONALIZE AQUI ============ */
-  const NOME_PADRAO = "Amor";   // nome dela (ou use o link: seusite.github.io/?nome=Maria)
+  const NOME_PADRAO = "Amor";      // nome dela (ou use o link: ?nome=Maria)
+  const SEU_NOME    = "";          // seu nome (opcional, aparece na mensagem do WhatsApp)
+  const WHATSAPP    = "";          // seu número com DDD, só números. Ex: "5513999999999"
   const MENSAGEM =
-`Eu sei que a gente se afastou,
-mas eu não consigo fingir que não penso em você.
-Eu gosto muito de você, de verdade. 💗
-E eu fiz esse site inteiro só pra te perguntar uma coisa…`;
+`Eu tentei ficar de boa depois de tudo,
+mas meu coração não colabora. 🫠
+Eu gosto muito de você. Tipo, MUITO mesmo.
+Já tentei te esquecer, mas o Wi-Fi do meu coração só pega o seu sinal. 📶💘
+Aí fiz esse site (sim, eu sei, exagerei) pra te perguntar uma coisa…`;
   /* ========================================= */
 
   const params = new URLSearchParams(location.search);
   const nome = params.get("nome") || NOME_PADRAO;
   document.getElementById("nome").textContent = nome;
   document.title = `${nome}, uma pergunta pra você 💌`;
+
+  const $ = id => document.getElementById(id);
+
+  function mostrar(id) {
+    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+    $(id).classList.add("ativa");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   /* Corações flutuantes */
   const emojisCoracao = ["💖","💗","💕","💘","💝","❤️","🌸"];
@@ -205,36 +312,39 @@ E eu fiz esse site inteiro só pra te perguntar uma coisa…`;
   setInterval(criarCoracao, 450);
   for (let i = 0; i < 8; i++) setTimeout(criarCoracao, i*150);
 
+  /* Medidores enchendo */
+  setTimeout(() => {
+    document.querySelectorAll(".barra > i").forEach(b => b.style.width = b.dataset.w + "%");
+  }, 500);
+
   /* Máquina de escrever */
-  const textoEl = document.getElementById("texto");
-  let i = 0;
+  const textoEl = $("texto");
+  let idx = 0;
   function digitar() {
-    if (i < MENSAGEM.length) {
-      textoEl.textContent += MENSAGEM[i++];
-      setTimeout(digitar, 38);
+    if (idx < MENSAGEM.length) {
+      textoEl.textContent += MENSAGEM[idx++];
+      setTimeout(digitar, 32);
     } else {
       textoEl.classList.remove("cursor");
-      document.getElementById("pergunta").classList.add("visivel");
-      setTimeout(() => document.getElementById("botoes").classList.add("visivel"), 500);
+      $("pergunta").classList.add("visivel");
+      setTimeout(() => $("botoes").classList.add("visivel"), 500);
     }
   }
-  setTimeout(digitar, 900);
+  setTimeout(digitar, 1000);
 
-  /* Botão "Não" fugindo + botão "Sim" crescendo */
-  const nao = document.getElementById("nao");
-  const sim = document.getElementById("sim");
-  const dica = document.getElementById("dica");
-  const emoji = document.getElementById("emoji");
+  /* Botão "Não" fugindo + "Sim" crescendo */
+  const nao = $("nao"), sim = $("sim"), dica = $("dica"), emoji = $("emoji");
   const frases = [
     "Tem certeza? 🥺",
     "Pensa direitinho…",
     "Ei, o botão tá fugindo! 😅",
-    "Você não vai conseguir clicar 😏",
+    "Ele tem medo de você, e eu também 😰",
     "Só o Sim funciona aqui 💖",
     "Vai, não custa nada 🥹",
     "Eu prometo ser melhor!",
     "O Sim tá cada vez maior, hein 👀",
-    "Desiste, vai 😘",
+    "Esse botão faz academia, desiste 😂",
+    "Última chance de ser legal comigo… 😘",
   ];
   const emojisTriste = ["🥺","😢","😭","🥹","😿","💔"];
   let tentativas = 0;
@@ -242,24 +352,32 @@ E eu fiz esse site inteiro só pra te perguntar uma coisa…`;
   function fugir(e) {
     if (e) e.preventDefault();
     tentativas++;
-    nao.classList.add("foge");
-    const m = 20;
-    const maxX = window.innerWidth - nao.offsetWidth - m;
-    const maxY = window.innerHeight - nao.offsetHeight - m;
-    nao.style.left = (m + Math.random()*Math.max(0, maxX - m)) + "px";
-    nao.style.top  = (m + Math.random()*Math.max(0, maxY - m)) + "px";
 
-    sim.style.transform = `scale(${Math.min(1 + tentativas*0.12, 2.2)})`;
+    // Tira o botão do cartão para o "fixed" funcionar em relação à tela
+    if (nao.parentElement !== document.body) document.body.appendChild(nao);
+    nao.classList.add("foge");
+
+    const m = 12;
+    const maxX = Math.max(m, window.innerWidth - nao.offsetWidth - m);
+    const maxY = Math.max(m, window.innerHeight - nao.offsetHeight - m);
+    nao.style.left = (m + Math.random()*(maxX - m)) + "px";
+    nao.style.top  = (m + Math.random()*(maxY - m)) + "px";
+
+    sim.style.transform = `scale(${Math.min(1 + tentativas*0.1, 1.9)})`;
     dica.textContent = frases[(tentativas-1) % frases.length];
     emoji.textContent = emojisTriste[tentativas % emojisTriste.length];
-    if (tentativas > 4) nao.textContent = "Não 😭";
+
+    if (tentativas >= 8) {
+      nao.textContent = "Tá bom, Sim 😩";
+      nao.onclick = () => sim.click();
+    }
   }
   nao.addEventListener("pointerenter", fugir);
   nao.addEventListener("pointerdown", fugir);
-  nao.addEventListener("click", fugir);
+  nao.addEventListener("click", e => { if (tentativas < 8) fugir(e); });
 
   /* Confete */
-  const canvas = document.getElementById("confete");
+  const canvas = $("confete");
   const ctx = canvas.getContext("2d");
   function ajustar() { canvas.width = innerWidth; canvas.height = innerHeight; }
   ajustar(); addEventListener("resize", ajustar);
@@ -267,7 +385,7 @@ E eu fiz esse site inteiro só pra te perguntar uma coisa…`;
   const cores = ["#ff4d88","#ffd43b","#74c0fc","#b197fc","#69db7c","#ff8787"];
 
   function explodir() {
-    for (let k = 0; k < 220; k++) {
+    for (let k = 0; k < 200; k++) {
       particulas.push({
         x: innerWidth/2, y: innerHeight/2,
         vx: (Math.random()-.5)*18,
@@ -281,7 +399,7 @@ E eu fiz esse site inteiro só pra te perguntar uma coisa…`;
       });
     }
   }
-  function loop() {
+  (function loop() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particulas = particulas.filter(p => p.vida > 0 && p.y < canvas.height + 40);
     for (const p of particulas) {
@@ -295,18 +413,54 @@ E eu fiz esse site inteiro só pra te perguntar uma coisa…`;
       ctx.restore();
     }
     requestAnimationFrame(loop);
-  }
-  loop();
+  })();
 
-  /* Clique no Sim */
+  /* Fluxo das telas */
   sim.addEventListener("click", () => {
-    document.getElementById("inicio").style.display = "none";
-    document.getElementById("final").classList.add("ativo");
     nao.style.display = "none";
-    explodir();
-    setTimeout(explodir, 500);
-    setTimeout(explodir, 1100);
-    setInterval(criarCoracao, 120);
+    mostrar("t2");
+    explodir(); setTimeout(explodir, 500); setTimeout(explodir, 1100);
+    setInterval(criarCoracao, 200);
+  });
+
+  $("continuar").addEventListener("click", () => mostrar("t3"));
+
+  const programas = {
+    cafe:     { icone: "☕", nome: "Um café",
+                msg: "Ótima escolha! Café é a desculpa perfeita pra ficar horas conversando e fingir que não vimos o tempo passar." },
+    pizza:    { icone: "🍕", nome: "Pizza",
+                msg: "Pizza! Alguém que sabe o que é importante na vida. Prometo dividir até a última fatia (a borda recheada é negociável)." },
+    sorvete:  { icone: "🍦", nome: "Sorvete",
+                msg: "Sorvete! Se derreter, eu derreto junto. 🥹 Mas só pelo sorvete, claro. (Mentira, é por você.)" },
+    cinema:   { icone: "🎬", nome: "Cinema",
+                msg: "Cinema! Você escolhe o filme e eu escolho a pipoca. Prometo não comentar o filme inteiro no seu ouvido." },
+    surpresa: { icone: "🎁", nome: "Surpresa (você manda)",
+                msg: "Você decide o programa e eu só apareço bonito(a) e cheiroso(a). Pode confiar, eu aceito qualquer plano com você." },
+  };
+
+  document.querySelectorAll(".opcao").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const p = programas[btn.dataset.p];
+      $("msgFinal").textContent = `${p.icone} ${p.msg}`;
+      $("recibo").innerHTML =
+        `<b>🧾 COMPROVANTE DE ENCONTRO</b><br>` +
+        `Convidada: ${nome}<br>` +
+        `Programa: ${p.nome}<br>` +
+        `Pagamento: por minha conta 😎<br>` +
+        `Garantia: 1 sorriso e 1 abraço<br>` +
+        `Validade: o quanto antes ⏰`;
+
+      const texto = `Oi${SEU_NOME ? ", aqui é " + SEU_NOME : ""}! Vi que você me desculpou e aceitou sair comigo (${p.nome}). Bora combinar o dia e o horário? 💘`;
+      if (WHATSAPP) {
+        $("zap").href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(texto)}`;
+      } else {
+        $("zap").style.display = "none";
+        $("dicaZap").textContent = "Me manda uma mensagem pra gente marcar! 💘";
+      }
+
+      mostrar("t4");
+      explodir(); setTimeout(explodir, 400);
+    });
   });
 </script>
 </body>
