@@ -3,6 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<script>
+  /* Anti-cache: a cada abertura, recarrega uma vez com um parâmetro único
+     (força o navegador a buscar a versão mais nova) e depois limpa a URL. */
+  (function () {
+    try {
+      var u = new URL(location.href);
+      if (!u.searchParams.has("_t")) {
+        u.searchParams.set("_t", Date.now());
+        location.replace(u.toString());
+      } else {
+        u.searchParams.delete("_t");
+        history.replaceState(null, "", u.pathname + u.search + u.hash);
+      }
+      if ("caches" in window) {
+        caches.keys().then(function (ks) { ks.forEach(function (k) { caches.delete(k); }); });
+      }
+    } catch (e) {}
+  })();
+</script>
 <title>Uma pergunta pra você 💌</title>
 <style>
   :root {
